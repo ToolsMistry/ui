@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech Made By KASIM PRODUCTION</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        textarea {
+            width: 80%;
+            height: 100px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #e74c3c;
+            border-radius: 5px;
+            resize: none;
+            background: linear-gradient(to right, #ecf0f1, #bdc3c7);
+        }
+
+        button {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        select {
+            width: 80%;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #e74c3c;
+            border-radius: 5px;
+            background: linear-gradient(to right, #ecf0f1, #bdc3c7);
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text to Speech Made By KASIM PRODUCTION</h1>
+    
+    <textarea id="textToSpeak" placeholder="Type text here..."></textarea>
+    
+    <label for="voiceSelect">Select a voice:</label>
+    <select id="voiceSelect">
+        <option value="default">Default</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="urdu">Urdu</option>
+    </select>
+
+    <button onclick="speakText()">Speak</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const voiceSelect = document.getElementById('voiceSelect');
+            populateVoiceList(voiceSelect);
+        });
+
+        function populateVoiceList(voiceSelect) {
+            if ('speechSynthesis' in window) {
+                const synthesis = window.speechSynthesis;
+                const voices = synthesis.getVoices();
+
+                voices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.value = voice.name;
+                    option.textContent = voice.name;
+                    voiceSelect.appendChild(option);
+                });
+            }
+        }
+
+        function speakText() {
+            const textToSpeak = document.getElementById('textToSpeak').value;
+            const voiceSelect = document.getElementById('voiceSelect');
+            const selectedVoiceOption = voiceSelect.options[voiceSelect.selectedIndex].value;
+
+            if ('speechSynthesis' in window) {
+                const synthesis = window.speechSynthesis;
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+                synthesis.getVoices();  // Ensure voices are loaded
+
+                if (selectedVoiceOption === 'male') {
+                    utterance.voice = synthesis.getVoices().find(voice => voice.name.includes('Male'));
+                } else if (selectedVoiceOption === 'female') {
+                    utterance.voice = synthesis.getVoices().find(voice => voice.name.includes('Female'));
+                } else if (selectedVoiceOption === 'urdu') {
+                    // Choose an Urdu voice based on your browser's available voices
+                    utterance.voice = synthesis.getVoices().find(voice => voice.lang.includes('ur'));
+                } else {
+                    utterance.voice = synthesis.getVoices().find(voice => voice.name === selectedVoiceOption);
+                }
+
+                synthesis.speak(utterance);
+            } else {
+                alert('Text-to-Speech is not supported in your browser. Please use a different browser.');
+            }
+        }
+    </script>
+</body>
+</html>
